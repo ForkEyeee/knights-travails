@@ -5,14 +5,13 @@ class GameBoard {
   }
   generateGameBoard(x = 0, arr = []) {
     if (x >= 9) {
-      return
+      return arr
     } else {
       for (let i = 0; i <= 8; i++) {
         arr.push([x, i])
         console.log(arr)
       }
-      this.generateGameBoard(++x, arr)
-      return arr
+      return this.generateGameBoard(++x, arr)
     }
   }
 }
