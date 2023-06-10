@@ -1,40 +1,50 @@
-class Node {
-  constructor(data = null, left = null, right = null) {
-    this.data = data
-    this.left = left
-    this.right = right
-  }
+function isValidMove(x, y) {
+  return x >= 0 && y >= 0 && x < 8 && y < 8
 }
 
-class GameBoard {
-  constructor(knight) {
-    this.gameBoard = this.generateGameBoard()
-    this.tree = this.buildTree(this.gameBoard)
-    this.knight = knight
-  }
+const moves = [
+  [2, 1],
+  [1, 2],
+  [-1, 2],
+  [-2, 1],
+  [-2, -1],
+  [-1, -2],
+  [1, -2],
+  [2, -1],
+]
 
-  generateGameBoard(j = 0, arr = [[], [], [], [], [], [], [], [], []]) {
-    if (j >= 9) {
-      return arr
-    } else {
-      for (let i = 0; i <= 8; i++) {
-        arr[j].push([j, i])
+function knightMoves(start, end) {
+  const queue = [{ pos: start, parent: null }]
+  const visited = new Set()
+
+  while (queue.length > 0) {
+    const node = queue.shift()
+    const [x, y] = node.pos
+    const key = `${x},${y}`
+
+    if (!visited.has(key)) {
+      visited.add(key)
+
+      if (x === end[0] && y === end[1]) {
+        let parentNode = node
+        const path = []
+        while (parentNode) {
+          path.unshift(parentNode.pos)
+          parentNode = parentNode.parent
+        }
+        return { path: path, steps: path.length - 1 }
       }
-      return this.generateGameBoard(++j, arr)
+
+      for (const [dx, dy] of moves) {
+        const newX = x + dx
+        const newY = y + dy
+
+        if (isValidMove(newX, newY)) {
+          queue.push({ pos: [newX, newY], parent: node })
+        }
+      }
     }
   }
 
-  buildTree(arr, start = 0, end = arr.length - 1) {
-    if (start > end) {
-      return null
-    }
-    let mid = Math.floor((start + end) / 2)
-    const node = new Node(arr[mid])
-    node.left = this.buildTree(arr, start, mid - 1)
-    node.right = this.buildTree(arr, mid + 1, end)
-    return node
-  }
-  knightMoves(x, y) {}
+  return null
 }
-
-const test = new GameBoard([3,4])
